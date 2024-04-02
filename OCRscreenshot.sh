@@ -33,7 +33,7 @@ function OCRscreenshot_main
     {
         # 从管道中获取文字
         local _OUT_TEXT="$(cat)"
-        echo "OCR: $_OUT_TEXT"
+        echo "OCR: '$_OUT_TEXT'"
         # 发出通知
         local OCR_Notify_Action=$(notify-send --app-name OCR --action ocr_Copy=复制 --action ocr_Translate=翻译 "$_OUT_TEXT")
         echo "notify action is: '$OCR_Notify_Action'"
@@ -46,15 +46,15 @@ function OCRscreenshot_main
         ocr_Translate)
             # 获取翻译结果
             local _TRANS_OUT=$(trans -b -t "$_Translate_Shell_Lang" "$_OUT_TEXT")
-            echo "translate out: $_TRANS_OUT"
+            echo "translate out: '$_TRANS_OUT'"
             # 发送通知
             local OCR_trans_Notify_Action=$(notify-send --app-name OCR_translate --action trans_Copy=复制 "$_TRANS_OUT")
-            echo "OCR.trans action is: $OCR_trans_Notify_Action"
+            echo "OCR.trans action is: '$OCR_trans_Notify_Action'"
             # 实现通知操作
             case "$OCR_trans_Notify_Action" in
             trans_Copy)
                 wl-copy "$_TRANS_OUT"
-                echo "wl-copy: $_TRANS_OUT"
+                echo "wl-copy: '$_TRANS_OUT'"
                 ;;
             *)
                 echo "OCR.trans: no trans notify actions were perform"
