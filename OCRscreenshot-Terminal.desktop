@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment[zh_CN]=
+Comment=
+Exec='/OCRscreenshot.sh'
+Icon=utilities-terminal
+MimeType=
+Name[zh_CN]=OCR屏幕截图
+Name=OCRscreenshot
+Terminal=true
+Type=Application
