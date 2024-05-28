@@ -39,9 +39,10 @@
 - xclip (x11)
 - translate-shell
 - gum (terminal mode)
+- less (terminal mode)
 
 ```text
-spectacle tesseract wl-clipboard xclip translate-shell gum
+spectacle tesseract wl-clipboard xclip translate-shell gum less
 ```
 
 ## 2.一些重要配置

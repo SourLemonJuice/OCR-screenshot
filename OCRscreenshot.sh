@@ -21,6 +21,7 @@ _Translate_Shell_Lang="zh"
 
 # 主程序设置
 # 结果输出模式
+# Notification/Terminal
 Result_Mode="Notification"
 
 # ==== librarys ====
@@ -112,11 +113,13 @@ function Return_result
         ;;
 
     Terminal)
-        # Show out text
+        # Display output text
         # by echo
         # echo "$_OUT_TEXT"
         # by "gum pager"
-        gum pager "$_OUT_TEXT"
+        # gum pager "$_OUT_TEXT"
+        # by less
+        echo "$_OUT_TEXT" | less
 
         # Choose what to do
         case $(gum choose "Copy" "Translate") in
@@ -126,7 +129,7 @@ function Return_result
             ;;
         Translate)
             local Translate_Output=$(trans -b -t "$_Translate_Shell_Lang" "$_OUT_TEXT")
-            gum pager "$Translate_Output"
+            echo "$Translate_Output" | less
             # Ask if copying
             case $(gum choose "Copy") in
             Copy)
@@ -145,22 +148,18 @@ function Return_result
     # END Return_result
 }
 
-function OCRscreenshot_main
+# main
+OCRscreenshot_getText |
 {
-    OCRscreenshot_getText |
-    {
-        # 从管道中获取文字
-        local _OUT_TEXT="$(cat)"
-        echo "OCR: '$_OUT_TEXT'"
-        case "$Result_Mode" in
-        Notification)
-            Return_result "Notification"
-            ;;
-        Terminal)
-            Return_result "Terminal"
-            ;;
-        esac
-    }
+    # 从管道中获取文字
+    local _OUT_TEXT="$(cat)"
+    echo "OCR: '$_OUT_TEXT'"
+    case "$Result_Mode" in
+    Notification)
+        Return_result "Notification"
+        ;;
+    Terminal)
+        Return_result "Terminal"
+        ;;
+    esac
 }
-# Run main function
-OCRscreenshot_main
