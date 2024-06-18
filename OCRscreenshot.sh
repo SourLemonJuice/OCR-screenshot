@@ -15,7 +15,7 @@ _Tesseract_Lang="eng+chi_sim"
 # 消除中文空格
 _Tesseract_Configs+="-c preserve_interword_spaces=1"
 
-# Translate Shell 设置 
+# Translate Shell 设置
 # 语言
 _Translate_Shell_Lang="zh"
 
@@ -72,6 +72,13 @@ function OCRscreenshot_getText
     cat
 }
 
+# display something to terminal
+function openTerminalViewer
+{
+    # shell always like this...
+    konsole -e bash --rcfile <(echo "echo $@ | less; exit;")
+}
+
 # Final return result using multi-way
 # - Notification
 # - Terminal
@@ -80,7 +87,7 @@ function Return_result
     case "$1" in
     Notification)
         # 发出通知
-        local OCR_Notify_Action=$(notify-send --app-name OCR --action ocr_Copy=复制 --action ocr_Translate=翻译 "$_OUT_TEXT")
+        local OCR_Notify_Action=$(notify-send --app-name OCR --action ocr_Copy=复制 --action ocr_Translate=翻译 --action ocr_terminal_viewer=在终端显示 -- "$_OUT_TEXT")
         echo "notify action is: '$OCR_Notify_Action'"
         # 实现
         case "$OCR_Notify_Action" in
@@ -88,12 +95,15 @@ function Return_result
             llib_clipboard_copy "$_OUT_TEXT"
             echo "clipboard-copy: $_OUT_TEXT"
             ;;
+        ocr_terminal_viewer)
+            openTerminalViewer "$_OUT_TEXT"
+            ;;
         ocr_Translate)
             # 获取翻译结果
             local _TRANS_OUT=$(trans -b -t "$_Translate_Shell_Lang" "$_OUT_TEXT")
             echo "translate out: '$_TRANS_OUT'"
             # 发送通知
-            local OCR_trans_Notify_Action=$(notify-send --app-name OCR_translate --action trans_Copy=复制 "$_TRANS_OUT")
+            local OCR_trans_Notify_Action=$(notify-send --app-name OCR_translate --action trans_Copy=复制 --action trans_terminal_viewer=在终端显示 -- "$_TRANS_OUT")
             echo "OCR.trans action is: '$OCR_trans_Notify_Action'"
             # 实现通知操作
             case "$OCR_trans_Notify_Action" in
@@ -101,6 +111,9 @@ function Return_result
                 llib_clipboard_copy "$_TRANS_OUT"
                 echo "clipboard-copy: '$_TRANS_OUT'"
                 ;;
+            trans_terminal_viewer)
+                openTerminalViewer "$_TRANS_OUT"
+            ;;
             *)
                 echo "OCR.trans: no trans notify actions were perform"
             ;;
@@ -152,7 +165,7 @@ function Return_result
 OCRscreenshot_getText |
 {
     # 从管道中获取文字
-    local _OUT_TEXT="$(cat)"
+    _OUT_TEXT="$(cat)"
     echo "OCR: '$_OUT_TEXT'"
     case "$Result_Mode" in
     Notification)
