@@ -26,12 +26,12 @@ Result_Mode="Notification"
 
 # ==== librarys ====
 
-# clipboard v2
+# lemon-bash-lib | clipboard | v3
 # dependency:
 # - wl-clipboard
 # - xclip
 
-llib_clipboard_copy() {
+clipboard_copy() {
     # 检测正在使用的桌面gui程序，并选择对应的剪贴板工具
     case $XDG_SESSION_TYPE in
     wayland)
@@ -40,21 +40,21 @@ llib_clipboard_copy() {
         ;;
     x11)
         # 那这个就是老古董x11的喽
-        # xclip 的实现
-        echo "$1" | xclip -selection c
-        # xsel 的实现
+        # 使用 xclip
+        echo "$1" | xclip -selection clipboard -in
+        # 使用 xsel
         # echo "$Parsed_Code" | xsel -ib
         ;;
     esac
 }
 
-llib_clipboard_paste() {
+clipboard_paste() {
     case $XDG_SESSION_TYPE in
     wayland)
         wl-paste
         ;;
     x11)
-        echo "只找了wayland模式的工具嘞"
+        xclip -selection clipboard -out
         ;;
     esac
 }
@@ -76,7 +76,9 @@ function OCRscreenshot_getText
 function openTerminalViewer
 {
     # shell always like this...
-    konsole -e bash --rcfile <(echo "echo $@ | less; exit;")
+    # there's no protection against of ' in the string if just use '$var'
+    safe_str=$(printf '%q' "$@")
+    konsole -e bash --rcfile <(echo "echo $safe_str | less; exit;")
 }
 
 # Final return result using multi-way
@@ -92,7 +94,7 @@ function Return_result
         # 实现
         case "$OCR_Notify_Action" in
         ocr_Copy)
-            llib_clipboard_copy "$_OUT_TEXT"
+            clipboard_copy "$_OUT_TEXT"
             echo "clipboard-copy: $_OUT_TEXT"
             ;;
         ocr_terminal_viewer)
@@ -108,7 +110,7 @@ function Return_result
             # 实现通知操作
             case "$OCR_trans_Notify_Action" in
             trans_Copy)
-                llib_clipboard_copy "$_TRANS_OUT"
+                clipboard_copy "$_TRANS_OUT"
                 echo "clipboard-copy: '$_TRANS_OUT'"
                 ;;
             trans_terminal_viewer)
@@ -138,7 +140,7 @@ function Return_result
         case $(gum choose "Copy" "Translate") in
         Copy)
             # Copy it with lib
-            llib_clipboard_copy "$_OUT_TEXT"
+            clipboard_copy "$_OUT_TEXT"
             ;;
         Translate)
             local Translate_Output=$(trans -b -t "$_Translate_Shell_Lang" "$_OUT_TEXT")
@@ -146,7 +148,7 @@ function Return_result
             # Ask if copying
             case $(gum choose "Copy") in
             Copy)
-                llib_clipboard_copy "$Translate_Output"
+                clipboard_copy "$Translate_Output"
                 ;;
             *)
                 return 1
@@ -162,6 +164,10 @@ function Return_result
 }
 
 # main
+
+# test cases:
+# echo 'Hello(\)      World`~' |
+
 OCRscreenshot_getText |
 {
     # 从管道中获取文字

@@ -6,19 +6,21 @@
 
 ### 使用通知模式 (Notification)
 
-- 调用`spectacle`截图
-- `tesseract`OCR识别，并发出带控件的通知
+- 调用 `spectacle` 截图
+- `tesseract` OCR识别，并发出带控件的通知
 
 可用控件有这些
 
-- 复制: 则尽可能复制文本到剪贴板
-- 在终端显示: 打开新的 konsole 并用 less 显示原文
+- 复制: 尽可能复制文本到剪贴板
+- 在终端显示: 打开新的 `konsole` 并用 `less` 显示译文
 - 翻译: 用`Translate Shell`翻译，并通知(可以复制译文)
   - 复制: 复制译文
-  - 在终端显示: 打开新的 konsole 并用 less 显示译文
+  - 在终端显示: 打开新的 `konsole` 并用 `less` 显示译文
 
 绑定快捷键时可以直接选择 `.sh` 脚本文件\
 当然 `Result_Mode` 还是需要被配置成 Notification 的（默认）
+
+如果需要使用别的终端模拟器打开消息需要修改 `openTerminalViewer` 函数
 
 ### 使用终端模式 (Terminal)
 
@@ -34,7 +36,7 @@
 
 同样的 `Result_Mode` 需要被配置成 Terminal
 
-总之建议不要用，是个半遗留下来的东西
+总之建议不要用，只是想留下来而已啦。通知模式是可以在调用终端显示内容的
 
 ## 依赖项目列表
 
@@ -93,4 +95,4 @@ Result_Mode="Notification"
 
 ## License
 
-This is free and unencumbered software released into the public domain.
+Published under `MIT` license now, before is `Unlicense`
